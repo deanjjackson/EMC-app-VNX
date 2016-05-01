@@ -1,0 +1,66 @@
+<form>
+  <label>File Data Movers Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>VNX Control Stations (CS)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nasframe array_serial_no=$array_tok$ | table
+ array_serial_no, hostname, ip, model, version | dedup ip | rename array_serial_no as "Array Serial", hostname as "Control Station Hostname", ip as "Control Station IP", version as "Code Verison", model as "Array Model"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>VNX File Data Movers (DMs)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nasserver nas_frame=$array_tok$ type=nas OR standby | table nas_frame, name, type, id, version, status | dedup name | rename nas_frame as "Array Serial", name as "Data Mover Name", type as "Active / Standby", id as "Data Mover ID", version as "Data Mover Version", status as "Data Mover Status"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>VNX File Virtual Data Movers (VDMs)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nasserver nas_frame=$array_tok$ type=vdm | table nas_frame, name, id, version, status | dedup name | sort num(id) | rename nas_frame as "Array Serial", name as "Data Mover Name", id as "Data Mover ID", version as "Data Mover Version", status as "Data Mover Status"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

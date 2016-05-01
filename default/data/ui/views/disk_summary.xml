@@ -1,0 +1,141 @@
+<form>
+  <label>Disk Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+    <input type="dropdown" token="drive_type_tok" searchWhenChanged="true">
+      <label>Drive Type</label>
+      <choice value="*">ALL</choice>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:drive array_serial_no=$array_tok$ | table array_serial_no, drive_type | dedup drive_type</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>drive_type</fieldForLabel>
+      <fieldForValue>drive_type</fieldForValue>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:drive array_serial_no=APM00113202705 drive_type="*" | dedup id | stats count(id)</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">Total Drives</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:drive array_serial_no=APM00113202705 drive_type="SATA FLASH" | dedup id | stats count(id)</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">SATA Flash Drives</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:drive array_serial_no=APM00113202705 drive_type="SAS" | dedup id | stats count(id)</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">SAS Drives</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:drive array_serial_no=APM00113202705 drive_type="NL SAS" | dedup id | stats count(id)</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">NL SAS Drives</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Disks</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:drive array_serial_no=$array_tok$ drive_type=$drive_type_tok|s$ | dedup id | rename array_serial_no as "Array Serial", id as "Drive ID", state as "Drive State", vendor as "Vendor", product_id as "Product ID", capacity as "Drive Capacity", drive_type as "Drive Type", is_hotspare as "Hotspare", product_revision as "Drive Code", current_speed as "Drive Speed" | table "Array Serial", "Drive ID", "Drive State", "Vendor", "Product ID", "Drive Capacity", "Drive Type", "Drive Code", "Drive Speed", "Hotspare"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+      </table>
+    </panel>
+  </row>
+</form>

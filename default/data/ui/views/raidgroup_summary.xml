@@ -1,0 +1,61 @@
+<form>
+  <label>RAID Group Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>VNX RAID Groups</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:raidgroup array_serial_no=$array_tok$ | dedup array_serial_no,id | eval "Total Capacity (GB)"=round(logical_cap/1024,2) | eval "Free Capacity (GB)"=round(free_cap/1024,2) | eval "Allocated Capacity (GB)"='Total Capacity (GB)'-'Free Capacity (GB)' | rename id as "RAID Group ID", rtype as "RAID Group Type", array_serial_no as "Array Serial" | table "Array Serial", "RAID Group ID", "RAID Group Type", "Total Capacity (GB)", "Allocated Capacity (GB)", "Free Capacity (GB)"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <input type="dropdown" token="rg_tok" searchWhenChanged="true">
+        <label>VNX RAID Group</label>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:rgDrive array_serial_no=$array_tok$ | table rg_id | dedup rg_id</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <fieldForLabel>rg_id</fieldForLabel>
+        <fieldForValue>rg_id</fieldForValue>
+        <choice value="*">ALL</choice>
+        <default>*</default>
+        <initialValue>*</initialValue>
+      </input>
+      <table>
+        <title>VNX RAID Group Drives</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:rgdrive array_serial_no=$array_tok$ rg_id=$rg_tok$ | rename array_serial_no as "Array Serial", rg_id as "RAID Group ID", drive_id as "Drive ID" | table "Array Serial", "RAID Group ID", "Drive ID"  | dedup "Drive ID"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

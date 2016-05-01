@@ -1,0 +1,25 @@
+<nav search_view="search" color="#29688A">
+  <view name="overview" default='true'/>
+  <collection label="Summary">
+   <view name="sp_summary"/>
+   <view name="storagepool_summary"/>
+   <view name="raidgroup_summary"/>
+   <view name="disk_summary"/>
+   <view name="lun_summary"/>
+   <divider />
+   <view name="dm_summary"/>
+   <view name="fs_summary"/>
+   <view name="share_summary"/>
+  </collection>
+  <collection label="Performance">
+   <view name="sp_performance"/>
+   <view name="storagepool_performance"/>
+   <view name="disk_performance"/>
+   <view name="lun_performance"/>
+   <divider />
+    <view name="dm_performance"/>
+    <view name="smb_performance"/>
+    <view name="nfs_performance"/>
+  </collection>
+  <view name="search" />
+</nav>

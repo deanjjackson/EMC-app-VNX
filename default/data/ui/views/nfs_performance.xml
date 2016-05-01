@@ -1,0 +1,111 @@
+<form>
+  <label>NFS Export Performance</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+    <input type="time" token="early_time_token" searchWhenChanged="true">
+      <label>Time Range</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <chart>
+        <title>NFS Export Read Operations (/sec)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nfsexportPerf nas_frame=$array_tok$ | timechart span=10m avg(nfs_read_ops) by nfs_export</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="charting.chart">line</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>NFS Export Write Operations (/sec)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nfsexportPerf nas_frame=$array_tok$ | timechart span=10m avg(nfs_write_ops) by nfs_export</query>
+        </search>
+        <option name="charting.chart">line</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>NFS Export Read Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nfsexportPerf nas_frame=$array_tok$ | eval nfs_read_mb=round(nfs_read_kb/1024,2) | timechart span=10m avg(nfs_read_mb) by nfs_export</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>NFS Export Write Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:nfsexportPerf nas_frame=$array_tok$ |eval nfs_write_mb=round(nfs_write_kb/1024,2) | timechart span=10m avg(nfs_write_mb) by nfs_export</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="charting.chart">line</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+      </chart>
+    </panel>
+  </row>
+</form>

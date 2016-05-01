@@ -1,0 +1,43 @@
+<form>
+  <label>LUN Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+    <input type="dropdown" token="lun_name_tok" searchWhenChanged="true">
+      <label>LUN Name</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:device array_serial_no=APM00113202705  |  dedup id, name</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>name</fieldForLabel>
+      <fieldForValue>name</fieldForValue>
+      <choice value="*">ALL</choice>
+      <initialValue>*</initialValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>VNX LUNs</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:device array_serial_no=$array_tok$ name=$lun_name_tok|s$ | table name, id, capacity, state, is_thin, is_pool_based, default_owner, current_owner, uid | dedup id | sort num(id) | rename id as "LUN ID", name as "LUN Name", capacity as "LUN Capacity", state as "LUN State". is_thin as "Thin LUN", is_pool_based as "Pool LUN", default_owner as "Default SP", current_owner as "Current SP", uid  as "LUN UID"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+      </table>
+    </panel>
+  </row>
+</form>

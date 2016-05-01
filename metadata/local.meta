@@ -1,0 +1,131 @@
+[app/ui]
+version = 6.4.0
+modtime = 1461204105.180761000
+
+[app/launcher]
+version = 6.4.0
+modtime = 1461204105.182265000
+
+[views/overview]
+owner = admin
+version = 6.4.0
+modtime = 1462051303.233495000
+
+[nav/default]
+access = read : [ * ], write : [ admin, power ]
+export = system
+owner = nobody
+version = 6.4.0
+modtime = 1462102376.571299000
+
+[views/performance]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102605.012807000
+
+[views/summary]
+access = read : [ * ], write : [ * ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102748.702277000
+
+[views/disk_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102514.601582000
+
+[views/disk_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102531.173863000
+
+[views/dm_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102540.995027000
+
+[views/dm_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102553.473456000
+
+[views/fs_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102564.295381000
+
+[views/lun_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102573.936905000
+
+[views/lun_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102582.186822000
+
+[views/nfs_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102590.751050000
+
+[views/raidgroup_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102616.352076000
+
+[views/share_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102625.134025000
+
+[views/smb_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102633.706345000
+
+[views/sp_performance]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102720.641838000
+
+[views/sp_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102731.299299000
+
+[views/storagepool_summary]
+access = read : [ * ], write : [ admin, power ]
+export = none
+owner = admin
+version = 6.4.0
+modtime = 1462102740.361206000

@@ -1,0 +1,49 @@
+<form>
+  <label>Share/Exports Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX NAS Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:file:nasframe | table array_serial_no | dedup array_serial_no</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>VNX NAS SMB Shares</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:export nas_frame=$array_tok$ is_share=True | table nas_frame, name, netbios, path, is_share, server | dedup path</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>VNX NAS NFS Exports</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:file:export nas_frame=$array_tok$ is_share=False | table nas_frame, path, options, server | dedup path | rename nas_frame as "Array Serial", path as "NFS Export", options as "NFS Options", server as "File Data Mover"</query>
+          <earliest>0</earliest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

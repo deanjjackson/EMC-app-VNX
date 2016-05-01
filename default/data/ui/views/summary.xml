@@ -1,0 +1,30 @@
+<form>
+  <label>Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok">
+      <label>Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Storage Pools</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:storagepool array_serial_no=$array_tok$ | table array_serial_no, name, id, disk_type, used_cap, raw_cap, status | dedup id  | eval "Used Capacity (MB)"=round(used_cap/1024,2) | eval "RAW Capacity (MB)"=round(raw_cap/1024,2) |rename array_serial_no as "Serial", name as "Pool Name", is as "Storage Pool ID"</query>
+          <earliest>0</earliest>
+          <latest></latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

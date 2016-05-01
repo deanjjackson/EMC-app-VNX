@@ -1,0 +1,115 @@
+<form>
+  <label>Disk Performance</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+    <input type="time" token="early_time_token" searchWhenChanged="true">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <viz type="treemap_app.treemap">
+        <title>Heat Map - Disks Throughput (IOPs)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:driveperf array_serial_no=$array_tok$ | eval iops=number_reads+number_writes | stats avg(iops) as "Disk Throughput (IOPs)" by array_serial_no, drive_id</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">50</option>
+        <option name="treemap_app.treemap.useZoom">true</option>
+        <option name="treemap_app.treemap.showLabels">true</option>
+        <option name="treemap_app.treemap.showLegend">true</option>
+        <option name="treemap_app.treemap.showTooltip">true</option>
+        <option name="treemap_app.treemap.maxCategories">10</option>
+        <option name="treemap_app.treemap.useColors">true</option>
+        <option name="treemap_app.treemap.colorMode">sequential</option>
+        <option name="treemap_app.treemap.minColor">#65a637</option>
+        <option name="treemap_app.treemap.maxColor">#d93f3c</option>
+        <option name="treemap_app.treemap.numOfBins">6</option>
+      </viz>
+    </panel>
+    <panel>
+      <table>
+        <title>Top 20 - Total Disk Throughput (IOPs)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:driveperf array_serial_no=$array_tok$ | eval iops=number_reads+number_writes | stats sparkline(avg(iops),6h) as "Total Disk Throughput (IOPs) Over 6Hrs" avg(iops) by array_serial_no, drive_id | sort -num(avg(iops)) | head 20 | rename avg(iops) as "Average Total Disk Throughput (IOPs)" | rename array_serial_no as "Array Serial", drive_id as "Drive ID"</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="treemap_app.treemap.useZoom">true</option>
+        <option name="treemap_app.treemap.showLabels">true</option>
+        <option name="treemap_app.treemap.showLegend">true</option>
+        <option name="treemap_app.treemap.showTooltip">true</option>
+        <option name="treemap_app.treemap.maxCategories">10</option>
+        <option name="treemap_app.treemap.useColors">true</option>
+        <option name="treemap_app.treemap.colorMode">sequential</option>
+        <option name="treemap_app.treemap.minColor">#65a637</option>
+        <option name="treemap_app.treemap.maxColor">#d93f3c</option>
+        <option name="treemap_app.treemap.numOfBins">6</option>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">cell</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <viz type="treemap_app.treemap">
+        <title>Heat Map - Disks Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:driveperf array_serial_no=$array_tok$ | eval bw=(kbytes_read+kbytes_written)/1024 | eval bw=if(bw&gt;0, bw, 0) | stats avg(bw) as "Disk Bandwidth (MB/s)" by array_serial_no, drive_id</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+        <option name="treemap_app.treemap.maxColor">#d93f3c</option>
+        <option name="treemap_app.treemap.minColor">#65a637</option>
+        <option name="treemap_app.treemap.numOfBins">6</option>
+        <option name="treemap_app.treemap.useColors">true</option>
+        <option name="treemap_app.treemap.showLabels">true</option>
+        <option name="treemap_app.treemap.useZoom">true</option>
+        <option name="treemap_app.treemap.showLegend">true</option>
+        <option name="treemap_app.treemap.showTooltip">true</option>
+        <option name="treemap_app.treemap.maxCategories">10</option>
+        <option name="treemap_app.treemap.colorMode">sequential</option>
+      </viz>
+    </panel>
+    <panel>
+      <table>
+        <title>Top 20 - Total Disks Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:driveperf array_serial_no=$array_tok$ | eval bw=(kbytes_read+kbytes_written)/1024 | eval bw=if(bw&gt;0, bw, 0) | stats sparkline(avg(bw),6h) as "Total Disk Bandwidth (MB/s)  Over 6hrs" avg(bw) by array_serial_no, drive_id | sort -num(avg(bw)) | head 20 | rename avg(bw) as "Average Total Disk Bandwidth (MB/s)" | rename array_serial_no as "Array Serial", drive_id as "Drive ID"</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+</form>

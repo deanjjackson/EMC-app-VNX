@@ -1,0 +1,176 @@
+<form>
+  <label>Storage Processor Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=A | table sp_read_cache_state, array_serial_no  | head 1</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="underLabel">SP A: READ CACHE</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=A | table sp_write_cache_state, array_serial_no  | head 1</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="underLabel">SP A: WRITE CACHE</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=B | table sp_read_cache_state, array_serial_no  | head 1</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">SP B: READ CACHE</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=B | table sp_write_cache_state, array_serial_no  | head 1</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="colorBy">value</option>
+        <option name="colorMode">none</option>
+        <option name="numberPrecision">0</option>
+        <option name="rangeColors">["0x65a637","0x6db7c6","0xf7bc38","0xf58f39","0xd93f3c"]</option>
+        <option name="rangeValues">[0,30,70,100]</option>
+        <option name="showSparkline">1</option>
+        <option name="showTrendIndicator">1</option>
+        <option name="trendColorInterpretation">standard</option>
+        <option name="trendDisplayMode">absolute</option>
+        <option name="unitPosition">after</option>
+        <option name="useColors">0</option>
+        <option name="useThousandSeparators">1</option>
+        <option name="linkView">search</option>
+        <option name="underLabel">SP B: WRITE CACHE</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Storage Processor A</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:agent array_serial_no=$array_tok$ sp_id=A | table array_serial_no, model, sp_memory,revision, ip | head 1 | rename array_serial_no as "Array Serial", model as "Array Model", sp_memory as "SP Memory", revision as "SP Code", ip as "SP IP Address"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Storage Processor B</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:agent array_serial_no=$array_tok$ sp_id=B | table array_serial_no, model, sp_memory,revision, ip | head 1 | rename array_serial_no as "Array Serial", model as "Array Model", sp_memory as "SP Memory", revision as "SP Code", ip as "SP IP Address"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <title>Caching / Logging</title>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=A | table array_serial_no, sp_read_cache_state, sp_write_cache_state, statistics_logging | head 1 | rename array_serial_no as "Array Serial", model as "Array Model", sp_read_cache_state as "SP Read Cache", sp_write_cache_state as "SP Write Cache", statistics_logging as "Statistics Logging"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+    <panel>
+      <table>
+        <title>Caching / Logging</title>
+        <search>
+          <query>index=vnx sourcetype="vnx:block:spperf" array_serial_no=$array_tok$ sp_id=B | table array_serial_no, sp_read_cache_state, sp_write_cache_state, statistics_logging | head 1  | rename array_serial_no as "Array Serial", model as "Array Model", sp_read_cache_state as "SP Read Cache", sp_write_cache_state as "SP Write Cache", statistics_logging as "Statistics Logging"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

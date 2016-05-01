@@ -1,0 +1,99 @@
+<form>
+  <label>Storage Pool Summary</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <table>
+        <title>Storage Pools</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:storagepool array_serial_no=$array_tok$ | dedup array_serial_no,id  | eval "Allocated Capacity (GB)"=round(used_cap/1024,2) | eval "Total Capacity (GB)"=round(user_cap/1024,2) | eval "Free Capacity (GB)"='Total Capacity (GB)'-'Allocated Capacity (GB)' | sort num(id) 
+| rename array_serial_no as "Serial", name as "Pool Name", id as "Storage Pool ID", disk_type as "Disk Type", status as "Pool Status" | table "Serial", "Pool Name",  "Storage Pool ID",  "Disk Type", "Allocated Capacity (GB)",   "Free Capacity (GB)", "Total Capacity (GB)", "Pool Status"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>VNX Storage Pools Capacity (MB)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:storagepool array_serial_no=$array_tok$ | dedup array_serial_no,id  | eval "Allocated Capacity (GB)"=round(used_cap/1024,2) | eval "Total Capacity (GB)"=round(user_cap/1024,2) | eval "Free Capacity (GB)"='Total Capacity (GB)'-'Allocated Capacity (GB)' | rename array_serial_no as "Serial", name as "Pool Name", id as "Storage Pool ID", disk_type as "Disk Type", status as "Pool Status" | chart avg("Allocated Capacity (GB)"), avg("Free Capacity (GB)") over  "Pool Name" by "Total Capacity (GB)"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="charting.chart">bar</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">all</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.axisTitleX.text">VNX Storage Pool Capacity (MB)</option>
+        <option name="charting.axisTitleY.text">VNX Storage Pool Capacity (MB)</option>
+        <option name="charting.seriesColors">[0xeeeeee,0xa1d490]</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <input type="dropdown" token="pool_tok" searchWhenChanged="true">
+        <label>VNX Storage Pool</label>
+        <choice value="*">ALL</choice>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:pooldrive array_serial_no=$array_tok$ pool_name | table array_serial_no, pool_name, pool_id, drive_id | dedup array_serial_no, pool_name</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <fieldForLabel>pool_name</fieldForLabel>
+        <fieldForValue>pool_name</fieldForValue>
+        <default>*</default>
+      </input>
+      <table>
+        <title>Storage Pool Drives</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:pooldrive array_serial_no=$array_tok$ pool_name=$pool_tok$ | table array_serial_no, pool_name, pool_id, drive_id  | dedup drive_id | rename array_serial_no as "Array Serial", pool_name as "Storage Pool Name", pool_id as "Storage Pool ID", drive_id as "Drive ID"</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <option name="wrap">true</option>
+        <option name="rowNumbers">false</option>
+        <option name="drilldown">cell</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">10</option>
+      </table>
+    </panel>
+  </row>
+</form>

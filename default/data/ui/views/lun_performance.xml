@@ -1,0 +1,83 @@
+<form>
+  <label>LUN Performance</label>
+  <fieldset submitButton="false">
+    <input type="dropdown" token="array_tok" searchWhenChanged="true">
+      <label>VNX Block Array</label>
+      <search>
+        <query>index=vnx sourcetype=vnx:block:agent | table array_serial_no | dedup array_serial_no</query>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </search>
+      <fieldForLabel>array_serial_no</fieldForLabel>
+      <fieldForValue>array_serial_no</fieldForValue>
+      <selectFirstChoice>true</selectFirstChoice>
+    </input>
+    <input type="time" token="early_time_token" searchWhenChanged="true">
+      <label>Time</label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <viz type="treemap_app.treemap">
+        <title>Heat Map - LUN Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:deviceperf array_serial_no=$array_tok$ | eval bw=(blocks_read+blocks_written)/1024 | eval bw=if(bw&gt;0, bw, 0) | stats avg(bw) as "LUN Bandwidth (MB/s)" by device_name, device_id</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">0</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.showDataLabels">none</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">right</option>
+        <option name="treemap_app.treemap.useZoom">true</option>
+        <option name="treemap_app.treemap.showLabels">false</option>
+        <option name="treemap_app.treemap.showLegend">true</option>
+        <option name="treemap_app.treemap.showTooltip">true</option>
+        <option name="treemap_app.treemap.maxCategories">100</option>
+        <option name="treemap_app.treemap.useColors">true</option>
+        <option name="treemap_app.treemap.colorMode">sequential</option>
+        <option name="treemap_app.treemap.minColor">#65a637</option>
+        <option name="treemap_app.treemap.maxColor">#d93f3c</option>
+        <option name="treemap_app.treemap.numOfBins">6</option>
+      </viz>
+    </panel>
+    <panel>
+      <table>
+        <title>Top 20 - Total Disks Bandwidth (MB/s)</title>
+        <search>
+          <query>index=vnx sourcetype=vnx:block:deviceperf array_serial_no=APM00113202705 | eval bw=(blocks_read+blocks_written)/1024 | eval bw=if(bw&gt;0, bw, 0) | stats sparkline(avg(bw),6h) as "Total Disk Bandwidth (MB/s)  Over 6hrs" avg(bw) as "LUN Bandwidth (MB/s)" by device_name, device_id | sort -num("LUN Bandwidth (MB/s)") | head 20 | rename device_name as "LUN Name", device_id as "LUN ID"</query>
+          <earliest>$early_time_token.earliest$</earliest>
+          <latest>$early_time_token.latest$</latest>
+        </search>
+        <option name="wrap">undefined</option>
+        <option name="rowNumbers">undefined</option>
+        <option name="drilldown">row</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="count">20</option>
+      </table>
+    </panel>
+  </row>
+</form>
